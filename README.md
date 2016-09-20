@@ -1,4 +1,4 @@
-# msgobs
+# msgobs | Message Observers
 A JavaScript modification for the Canvas learning management system. Adds the ability to message the observers of students on the Inbox and Gradebook pages.
 
 ## Description
@@ -6,7 +6,7 @@ Canvas has some excellent communications features, namely the ability to message
 
 Fortunately, thanks to Canvas's open API, a workaround is possible. This script adds a couple of button on the Inbox and 'Message Students Who..' (Grades -> Assessment Header Dropdown -> 'Message Students Who...') pages to lookup the observers of specified students and insert them as recipients of the message.
 
-![demo](https://cloud.githubusercontent.com/assets/22314386/18668641/22bd4c4e-7f69-11e6-836f-a555c7c269f6.gif)
+![demo](https://cloud.githubusercontent.com/assets/22314386/18670963/c71ac7ac-7f74-11e6-87f4-1b24d749f7a1.gif)
 
 Using the selections from the 'Message Students Who' criteria dropdown box you should be able to very quickly and efficiently:
 
