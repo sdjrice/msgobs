@@ -29,7 +29,7 @@ Ultra-Brief GreaseMonkey instructions:
 
 Tested in Chrome, Safari, Firefox and Internet Explorer (Edge) only.
 
-*Note: I have not had the opportunity to test the script with other institutions' Canvas instance. You may encounter issues, but I'm happy to offer advice: srice@scc.wa.edu.au*
+*Note: I have not had the opportunity to test the script with other institutions' Canvas instance. You may encounter some issues :( but I'm happy to offer advice :) srice@scc.wa.edu.au*
 
 *I highly recommend that you test the script on your Canvas test instance prior to putting it into wide use. Check the Inbox -> Sent Items to see that everything is working as intended.*
 
