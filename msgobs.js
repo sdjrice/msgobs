@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        Message Observers
+// @name        msgobs | Message Observers
 // @namespace   msgobs
-// @include     https://scc.test.instructure.com/*
-// @include     https://scc.instructure.com/*
+// @include     https://your-institution-here.test.instructure.com/*
+// @include     https://your-institution-here.instructure.com/*
 // @version     v0.01
 // @grant       none
 // ==/UserScript==
