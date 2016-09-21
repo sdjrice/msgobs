@@ -21,6 +21,7 @@ From the Inbox page you'll be able to
 * Observers will need to be enrolled in courses and linked to students, either manually or via SIS Import.
 
 ## Usage
+### Installation
 The script can be used either by adding the contents of msgobs.js to your institution's custom JavaScript file, or as a userscript in a browser extension like GreaseMonkey (Firefox) or TamperMonkey (Chrome).
 
 Ultra-Brief GreaseMonkey instructions:
@@ -46,8 +47,8 @@ send message dialog (only if the user has at least one teacher enrolment) and th
 * Clicking 'Remove Students' will remove students from the recipient list.
 
 #### Advanced
-* If you are an administrator and use the inbox without setting a course from the send message dialog, msgobs will search all enrolments for the specified user for teaching and observer results. This can be pretty slow.
-* You cannot send messages to, nor perform lookups for individuals to which the user would not normally have access. Using msgobs does not give greater access to individuals than they would normally have. 
+* If you are an administrator and use the inbox without setting a course from the send message dialog, msgobs will search all enrolments for the specified user for student and observer results. This can be pretty slow.
+* You cannot send messages to, nor perform lookups for, individuals to which the user would not normally have access. Using msgobs does not give greater access to individuals than they would normally have.
 
 ## Known Issues
 ### Gradebook
