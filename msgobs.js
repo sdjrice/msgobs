@@ -7,10 +7,12 @@
 // @grant       none
 // ==/UserScript==
 
-//If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
+// If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
 // to your own canvas instance. Don't forget the * after the trailing slash to ensure the script runs on all pages
 // Alternativley you can specify which pages this script should run on from the GreaseMonkey
 // control panel.
+
+//If adding to institution's custom JS you may omit all of the above.
 
 //The above UserScript block may be removed if you are not using GreaseMonkey or TamperMonkey etc
 
