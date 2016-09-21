@@ -47,6 +47,7 @@ send message dialog (only if the user has at least one teacher enrolment) and th
 
 #### Advanced
 * If you are an administrator and use the inbox without setting a course from the send message dialog, msgobs will search all enrolments for the specified user for teaching and observer results. This can be pretty slow.
+* You cannot send messages to, nor perform lookups for individuals to which the user would not normally have access. Using msgobs does not give greater access to individuals than they would normally have. 
 
 ## Known Issues
 ### Gradebook
