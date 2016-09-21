@@ -35,7 +35,9 @@ To use the script without having to use a browser extension. You'll need to add 
 
 Tested in Chrome (53), Safari (9.1.3), Firefox (50) and Internet Explorer (Edge) only.
 
-*Note: I have not had the opportunity to test the script with other institutions' Canvas instance. You may encounter some issues :( but I'm happy to offer advice :) srice@scc.wa.edu.au*
+Successfully tested with the Canvas trial instance.
+
+*If you encounter issues, shoot me an email and we'll figure out why! srice@scc.wa.edu.au*
 
 *I highly recommend that you test the script on your Canvas test instance prior to putting it into wide use. After using the script to send to observers, check the Inbox -> Sent Items to see that everything worked!*
 
@@ -49,6 +51,7 @@ send message dialog (only if the user has at least one teacher enrolment) and th
 #### Advanced
 * If you are an administrator and use the inbox without setting a course from the send message dialog, msgobs will search all enrolments for the specified user for student and observer results. This can be pretty slow.
 * You cannot send messages to, nor perform lookups for, individuals to which the user would not normally have access. Using msgobs does not give greater access to individuals than they would normally have.
+* When testing, be sure that the individuals to which you are sending test messages have confirmed their accounts (by clicking the email link). You cannot send messages to unverified users. A good test is to make sure you can actually send messages to the recipients without any modifications (e.g in the Marksbook/Gradebook, don't click include observers and make sure the message will actually send!).
 
 ## Known Issues
 ### Gradebook
