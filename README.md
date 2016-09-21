@@ -38,6 +38,16 @@ Tested in Chrome (53), Safari (9.1.3), Firefox (50) and Internet Explorer (Edge)
 
 *I highly recommend that you test the script on your Canvas test instance prior to putting it into wide use. After using the script to send to observers, check the Inbox -> Sent Items to see that everything worked!*
 
+### Operation
+#### Basic
+* The script adds 'Include Observers' and 'Remove Students' buttons to both the Inbox
+send message dialog (only if the user has at least one teacher enrolment) and the Gradebook 'Message Students Who...' pages.
+* Clicking 'Include Observers' will add observers to the recipient list.
+* Clicking 'Remove Students' will remove students from the recipient list.
+
+#### Advanced
+* If you are an administrator and use the inbox without setting a course from the send message dialog, msgobs will search all enrolments for the specified user for teaching and observer results. This can be pretty slow.
+
 ## Known Issues
 ### Gradebook
 If two students with completely identical names are enrolled in the same course, the script will fail to distinguish between them and send messages to potentially incorrect recipients.
