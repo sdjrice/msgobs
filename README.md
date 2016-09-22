@@ -25,11 +25,9 @@ From the Inbox page you'll be able to
 The script can be used either by adding the contents of msgobs.js to your institution's custom JavaScript file, or as a userscript in a browser extension like GreaseMonkey (Firefox) or TamperMonkey (Chrome).
 
 Ultra-Brief GreaseMonkey instructions:
-  1. Download and install the Firefox extension GreaseMonkey https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/?src=ss
-  2. Copy the entire script in msgobs.js (from this project)
-  3. In Firefox, press Tools -> GreaseMonkey -> New UserScript
-  4. Press 'Use script from clipboard'
-  5. Hit Tools -> GreaseMonkey -> Manage User Scripts -> Message Observers Preferences and update the included pages to include your institution's Canvas URL followed by a trailing /*
+  1. Using Firefox, download and install the extension GreaseMonkey https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/?src=ss
+  2. Click [here](https://github.com/sdjrice/msgobs/raw/master/msgobs.user.js) to install the msgobs as a userscript.
+  3. If your institution has a domain which does not end in .instructure.com you'll need to Hit Tools -> GreaseMonkey -> Manage User Scripts -> Message Observers Preferences and update the included pages to include your institution's Canvas URL.  
 
 To use the script without having to use a browser extension. You'll need to add the contents of msgobs.js to your Canvas custom JavaScript file. More about that here: https://community.canvaslms.com/docs/DOC-3010. This will affect everyone in your organisation.
 
