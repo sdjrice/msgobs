@@ -1,16 +1,19 @@
 // ==UserScript==
 // @name        msgobs | Message Observers
 // @namespace   msgobs
-// @include     https://your-institution-here.test.instructure.com/*
-// @include     https://your-institution-here.instructure.com/*
+// @include     https://*.instructure.com/gradebook*
+// @include     https://*.instructure.com/conversations*
+// @include     https://*.test.instructure.com/gradebook*
+// @include     https://*.test.instructure.com/conversations*
 // @version     v0.01
 // @grant       none
 // ==/UserScript==
 
-// If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
-// to your own canvas instance. Don't forget the * after the trailing slash to ensure the script runs on all pages
-// Alternativley you can specify which pages this script should run on from the GreaseMonkey
-// control panel.
+// If you are using TamperMonkey / GreaseMonkey you may need to update the above URLs
+// to your own canvas instance. If your canvas instance url ends in .instructure.com you
+// shouldn't need to change anything. Don't forget the * after the trailing slash to ensure
+// the script runs on all pages Alternativley you can specify which pages this script
+// should run on from the GreaseMonkey control panel.
 
 //If adding to institution's custom JS you may omit all of the above.
 
