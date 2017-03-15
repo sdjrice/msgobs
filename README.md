@@ -1,6 +1,13 @@
 # msgobs | Message Observers
 A JavaScript modification for the Canvas learning management system which adds the ability to message the observers of students on the Inbox and Gradebook/Marksbook pages.
 
+## Changelog
+
+Version 0.02 on 15/03/17
+- Fixed issue with unescaped message content.
+- Prevented clicking Remove Students while Include observers function is running.
+- Added dialog to preserve message content if sending fails in Gradebook function.  
+
 ## Description
 Canvas has some excellent communications features, namely the ability to message students who have not submitted or scored above or below a particular grade in any assignment appearing in the Marksbook by using the 'Message Students Who..' option. Unfortunately for K-12 institutions, there is no option to include observers (parents) in the recipients of such messages.
 
