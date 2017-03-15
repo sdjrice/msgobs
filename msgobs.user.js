@@ -1,21 +1,16 @@
 // ==UserScript==
-// @name        msgobs | Message Observers
+// @name        Message Observers
 // @namespace   msgobs
-// @include     https://*.instructure.com/gradebook*
-// @include     https://*.instructure.com/conversations*
-// @include     https://*.test.instructure.com/gradebook*
-// @include     https://*.test.instructure.com/conversations*
+// @include     https://scc.test.instructure.com/*
+// @include     https://scc.instructure.com/*
 // @version     v0.01
 // @grant       none
 // ==/UserScript==
 
-// If you are using TamperMonkey / GreaseMonkey you may need to update the above URLs
-// to your own canvas instance. If your canvas instance url ends in .instructure.com you
-// shouldn't need to change anything. Don't forget the * after the trailing slash to ensure
-// the script runs on all pages Alternativley you can specify which pages this script
-// should run on from the GreaseMonkey control panel.
-
-//If adding to institution's custom JS you may omit all of the above.
+//If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
+// to your own canvas instance. Don't forget the * after the trailing slash to ensure the script runs on all pages
+// Alternativley you can specify which pages this script should run on from the GreaseMonkey
+// control panel.
 
 //The above UserScript block may be removed if you are not using GreaseMonkey or TamperMonkey etc
 
@@ -33,7 +28,7 @@ var msgobs = {
     removeText: 'Remove Students', // remove students button text.
     busyText: 'Working...', //text to display while observers are being processed.
     btnWidth: '110px',
-    log: true, //output log in the browser console.
+    log: false, //output log in the browser console.
   },
 
   init: function() {
@@ -51,7 +46,7 @@ var msgobs = {
 
     msgobs.log('----------------');
     msgobs.log('MSGOBS');
-    msgobs.log('v0.01');
+    msgobs.log('v0.02');
     msgobs.log('https://github.com/sdjrice/msgobs');
     msgobs.log('Stephen Rice');
     msgobs.log('srice@scc.wa.edu.au');
@@ -313,6 +308,7 @@ var msgobs = {
               if (users.length > 0) {
                 msgobs.log('Getting all enrolments for all users..');
                 msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+                msgobs.common.btnRmvStu.addClass('disabled');
                 msgobs.common.getEnrolments(users, 'users', callback);
               } else {
                 msgobs.common.notify(msgobs.common.txt.noRecipients, 'warning');
@@ -371,6 +367,7 @@ var msgobs = {
               }
 
               msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
+              msgobs.common.btnRmvStu.removeClass('disabled');
 
               break;
           }
@@ -379,6 +376,7 @@ var msgobs = {
           switch (this.step) {
             case 1:
               msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+              msgobs.common.btnRmvStu.addClass('disabled');
               msgobs.log('Getting course enrolments');
               msgobs.common.getEnrolments([this.courseID], 'courses', callback);
               break;
@@ -416,7 +414,7 @@ var msgobs = {
                 msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
                 msgobs.log('No observers found');
               }
-
+              msgobs.common.btnRmvStu.removeClass('disabled');
               msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
               break;
           }
@@ -472,6 +470,7 @@ var msgobs = {
             case 1:
               //look up user enrolments.
               if (this.getRecipientIds().length) {
+                msgobs.common.btnAddObs.addClass('disabled');
                 msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
                 recipients = this.getRecipientIds();
                 var ids = [];
@@ -505,6 +504,7 @@ var msgobs = {
               msgobs.log(removal);
               this.removeById(removal);
               msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
+              msgobs.common.btnAddObs.removeClass('disabled');
               break;
           }
           break;
@@ -514,6 +514,7 @@ var msgobs = {
               //lookup course enrolments.
               if (this.getRecipientIds().length) {
                 msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
+                msgobs.common.btnAddObs.addClass('disabled');
                 msgobs.log('Getting Enrolments for users.');
                 msgobs.common.getEnrolments([this.courseID], 'courses', callback);
               } else {
@@ -550,6 +551,7 @@ var msgobs = {
               msgobs.log(removal);
               this.removeById(removal);
               msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
+              msgobs.common.btnAddObs.removeClass('disabled');
               break;
           }
           break;
@@ -689,6 +691,7 @@ var msgobs = {
           msgobs.gradebook.els.btnCanvasSend.remove();
           msgobs.gradebook.els.btnContainer.append(msgobs.gradebook.els.btnMsgobsSend);
           msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+          msgobs.common.btnRmvStu.addClass('disabled');
           if (!this.getStudentList().length) { // no studetns
             msgobs.common.notify(msgobs.common.txt.noStudents, 'warning');
             msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
@@ -730,6 +733,7 @@ var msgobs = {
           //insert the tokens to the ui, complete process with feedback.
           this.insert(observerIds);
           msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
+          msgobs.common.btnRmvStu.removeClass('disabled');
           msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
           break;
       }
@@ -821,13 +825,13 @@ var msgobs = {
       //Build mega data string. Couldn't get sending JSON object to work :(
       var data = 'utf8=%E2%9C%93'; //odd tick character
       data += '&authenticity_token=' + msgobs.common.getCsrfToken();
-      data += '&recipients=' + this.getRecipients().toString(',');
+      data += '&recipients=' +  encodeURIComponent(this.getRecipients().toString(','));
       data += '&group_conversation=true';
       data += '&bulk_message=true';
       data += '&context_code=course_' + this.courseId;
       data += '&mode=async';
-      data += '&subject=' + msgobs.gradebook.els.inputSubject.val();
-      data += '&body=' + msgobs.gradebook.els.inputBody.val();
+      data += '&subject=' +  encodeURIComponent(msgobs.gradebook.els.inputSubject.val());
+      data += '&body=' + encodeURIComponent(msgobs.gradebook.els.inputBody.val());
       data += '&_method=post';
 
       msgobs.log('Data: ' + data);
@@ -842,6 +846,7 @@ var msgobs = {
           msgobs.common.notify('Message sent!', 'success');
         } else {
           msgobs.common.notify('An error occured. Your message was not sent.', 'error');
+          alert('An error occured and your message was not sent. Please copy your message below to prevent losing your beautifully crafted dialog!\n\n' + msgobs.gradebook.els.inputBody.val());
         }
       };
 
