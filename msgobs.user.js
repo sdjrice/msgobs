@@ -1,10 +1,10 @@
 //==UserScript==
-//@name        Message Observers
-//@namespace   msgobs
-//@include     https://*.test.instructure.com/*
-//@include     https://*.instructure.com/*
-//@version     v0.03
-//@grant       none
+//@name Message Observers
+//@namespace msgobs
+//@include https://*.test.instructure.com/*
+//@include https://*.instructure.com/*
+//@version v0.03
+//@grant none
 //==/UserScript==
 
 // If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
