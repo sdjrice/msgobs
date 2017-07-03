@@ -4,7 +4,7 @@ A JavaScript modification for the Canvas learning management system which adds t
 ## Changelog
 
 Version 0.03 on 03/07/17
-- Added support for any kind of group in the recipient list. 
+- Added support for any kind of group in the recipient list.
 
 Version 0.02 on 15/03/17
 - Fixed issue with unescaped message content.
@@ -37,9 +37,9 @@ The script can be used either by adding the contents of msgobs.user.js to your i
 Ultra-Brief GreaseMonkey instructions:
   1. Using Firefox, download and install the extension [GreaseMonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/?src=ss).
   2. Click [here](https://github.com/sdjrice/msgobs/raw/master/msgobs.user.js) to install the msgobs as a userscript.
-  3. If your institution has a domain which does not end in .instructure.com you'll need to hit Tools -> GreaseMonkey -> Manage User Scripts -> Message Observers Preferences and update the included pages to include your institution's Canvas URL.  
+  3. Hit Tools -> GreaseMonkey -> Manage User Scripts -> Message Observers Preferences and update the included pages to include your institution's Canvas URL.  
 
-To use the script without having to use a browser extension. You'll need to add the contents of msgobs.js to your Canvas custom JavaScript file. More about that here: https://community.canvaslms.com/docs/DOC-3010. This will affect everyone in your organisation.
+To use the script without having to use a browser extension. You'll need to add the contents of msgobs.user.js to your Canvas custom JavaScript file. More about that here: https://community.canvaslms.com/docs/DOC-3010. This will affect everyone in your organisation.
 
 Tested in Chrome (53), Safari (9.1.3), Firefox (50) and Internet Explorer (Edge) only.
 

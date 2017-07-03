@@ -1,11 +1,11 @@
-//==UserScript==
-//@name Message Observers
-//@namespace msgobs
-//@include https://*.test.instructure.com/*
-//@include https://*.instructure.com/*
-//@version v0.03
-//@grant none
-//==/UserScript==
+// ==UserScript==
+// @name Message Observers
+// @namespace msgobs
+// @include https://canvas.test.instructure.com/*
+// @include https://canvas.instructure.com/*
+// @version v0.03
+// @grant none
+// ==/UserScript==
 
 // If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
 //  to your own canvas instance. Don't forget the * after the trailing slash to ensure the script runs on all pages
