@@ -3,6 +3,9 @@ A JavaScript modification for the Canvas learning management system which adds t
 
 ## Changelog
 
+Version 0.03 on 03/07/17
+- Added support for any kind of group in the recipient list. 
+
 Version 0.02 on 15/03/17
 - Fixed issue with unescaped message content.
 - Prevented clicking Remove Students while Include observers function is running.
@@ -59,6 +62,9 @@ send message dialog (only if the user has at least one teacher enrolment) and th
 * When testing, be sure that the individuals to which you are sending test messages have confirmed their accounts (by clicking the email link). You cannot send messages to unverified users. A good test is to make sure you can actually send messages to the recipients without any modifications (e.g in the Marksbook/Gradebook, don't click include observers and make sure the message will actually send!).
 
 ## Known Issues
+### Group Lookup with Account Admin
+If an administrator adds recipient groups from different courses in the Inbox, looking up the observers will take a very long time if those users have a number of enrollments.
+
 ### Gradebook
 If two students with completely identical names are enrolled in the same course, the script will fail to distinguish between them and send messages to potentially incorrect recipients.
 
