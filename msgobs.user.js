@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name Message Observers
-// @namespace msgobs
-// @include https://canvas.test.instructure.com/*
-// @include https://canvas.instructure.com/*
-// @version v0.03
-// @grant none
+// @name        Message Observers
+// @namespace   msgobs
+// @include     https://canvas.test.instructure.com/*
+// @include     https://canvas.instructure.com/*
+// @version     v0.04
+// @grant       none
 // ==/UserScript==
 
 // If you are using TamperMonkey / GreaseMonkey you will need to update the above URLs
@@ -16,7 +16,7 @@
 // instead applying the script to your entire site.
 
 /*
- * MSGOBS v0.03
+ * MSGOBS v0.04
  * https:// github.com/sdjrice/msgobs
  * Stephen Rice
  * srice@scc.wa.edu.au
@@ -270,7 +270,9 @@ var msgobs = {
             handle: function (data, status, results) {
               results.contexts.getCount ++;
               data.forEach(function (v) {
-                results.contexts.push(v.course_id);
+                if (results.contexts.indexOf(v.course_id) === -1) { // don't make duplicates
+                  results.contexts.push(v.course_id);
+                }
               });
               msgobs.log('getContextCount: ' + results.contexts.getCount + ' Total: ' + results.users.length);
               if (results.contexts.getCount === results.users.length) {

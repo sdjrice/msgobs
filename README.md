@@ -3,6 +3,9 @@ A JavaScript modification for the Canvas learning management system which adds t
 
 ## Changelog
 
+Version 0.04 on 06/07/17
+- Fixed issue where multiple course enrolment lookups were made for the same course in account admin mode.
+
 Version 0.03 on 03/07/17
 - Added support for any kind of group in the recipient list.
 
