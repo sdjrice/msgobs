@@ -16,6 +16,9 @@ Version 0.02 on 15/03/17
 - Prevented clicking Remove Students while Include observers function is running.
 - Added dialog to preserve message content if sending fails in Gradebook function.  
 
+Version 0.01
+- Initial release.
+
 ## Description
 Canvas has some excellent communications features, namely the ability to message students who have not submitted or scored above or below a particular grade in any assignment appearing in the Marksbook by using the 'Message Students Who..' option. Unfortunately for K-12 institutions, there is no option to include observers (parents) in the recipients of such messages.
 
@@ -44,7 +47,7 @@ Ultra-Brief GreaseMonkey instructions:
   2. Click [here](https://github.com/sdjrice/msgobs/raw/master/msgobs.user.js) to install the msgobs as a userscript.
   3. Hit Tools -> GreaseMonkey -> Manage User Scripts -> Message Observers Preferences and update the included pages to include your institution's Canvas URL.  
 
-To use the script without having to use a browser extension. You'll need to add the contents of msgobs.user.js to your Canvas custom JavaScript file. More about that here: https://community.canvaslms.com/docs/DOC-3010. This will affect everyone in your organisation.
+To use the script without having to use a browser extension you'll need to add the contents of msgobs.user.js to your Canvas custom JavaScript file. More about that here: https://community.canvaslms.com/docs/DOC-3010. This will make the script active for all teachers in your organisation.
 
 Tested in Chrome (53), Safari (9.1.3), Firefox (50) and Internet Explorer (Edge) only.
 
@@ -68,7 +71,7 @@ send message dialog (only if the user has at least one teacher enrolment) and th
 
 ## Known Issues
 ### Group Lookup with Account Admin
-If an administrator adds recipient groups from different courses in the Inbox, looking up the observers will take a very long time if those users have a number of enrollments.
+If an administrator adds recipient groups from different courses in the Inbox, looking up the observers will take a very long time if those users have a number of enrolments.
 
 ### Gradebook
 If two students with completely identical names are enrolled in the same course, the script will fail to distinguish between them and send messages to potentially incorrect recipients.
