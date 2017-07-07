@@ -3,7 +3,7 @@
 // @namespace   msgobs
 // @include     https://canvas.test.instructure.com/*
 // @include     https://canvas.instructure.com/*
-// @version     v0.04
+// @version     v0.05
 // @grant       none
 // ==/UserScript==
 
@@ -16,7 +16,7 @@
 // instead applying the script to your entire site.
 
 /*
- * MSGOBS v0.04
+ * MSGOBS v0.05
  * https:// github.com/sdjrice/msgobs
  * Stephen Rice
  * srice@scc.wa.edu.au
@@ -37,6 +37,7 @@ var msgobs = {
     removeText: 'Remove Students', //  remove students button text.
     busyText: 'Working...', // text to display while observers are being processed.
     btnWidth: '110px',
+    autoTickIndividualMsgCheckbox: true,
     log: false // output log in the browser console.
   },
 
@@ -53,8 +54,8 @@ var msgobs = {
 
   launch: function (type) {
     console.log('----------------');
-    console.log('MSGOBS \n v0.03 \n https://github.com/sdjrice/msgobs');
-    console.log('Stephen Rice \n srice@scc.wa.edu.au');
+    console.log('MSGOBS \n v0.05 \nhttps://github.com/sdjrice/msgobs');
+    console.log('Stephen Rice \nsrice@scc.wa.edu.au');
     console.log('----------------');
 
     this.common.init();
@@ -263,7 +264,7 @@ var msgobs = {
             contexts: function (results) {
               var callback = this.handle;
               results.users.forEach(function (v) {
-                msgobs.xhr.get('/api/v1/users/' + v.id + '/enrollments?per_page=100000', callback, results);
+                msgobs.xhr.get('/api/v1/users/' + v.id + '/enrollments?state=active&per_page=100000', callback, results);
               });
             },
 
@@ -498,6 +499,24 @@ var msgobs = {
       } else {
         msgobs.log('No teacher/admin role detected.');
         msgobs.log(window.ENV.current_user_roles);
+      }
+
+      this.autoCheck();
+
+    },
+
+    autoCheck: function () { // check the tickbox for individual messages.
+      if (msgobs.options.autoTickIndividualMsgCheckbox) {
+        $('#compose-btn').on('click', function () {
+          setTimeout(function () {
+            if($('#bulk_message').length) {
+              $('#bulk_message').prop('checked', true);
+            } else {
+              msgobs.conversations.autoCheck();
+            }
+          }, 50);
+        });
+
       }
     },
 
