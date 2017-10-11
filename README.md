@@ -2,6 +2,9 @@
 A JavaScript modification for the Canvas learning management system which adds the ability to message the observers of students on the Inbox and Gradebook/Marksbook pages.
 
 ## Changelog
+Version 0.06 on 11/10/17
+- Added support for courses with more than one hundred enrolments.
+
 Version 0.05 on 07/07/17
 - Added auto tick "Send an individual message to each recipient" function. This behaviour is active by default, but can be disabled in the msgobs options.
 
