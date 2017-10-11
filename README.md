@@ -43,12 +43,12 @@ From the Inbox page you'll be able to
 
 ## Usage
 ### Installation
-The script can be used either by adding the contents of msgobs.user.js to your institution's custom JavaScript file, or as a userscript in a browser extension like GreaseMonkey (Firefox) or TamperMonkey (Chrome).
+The script can be used either by adding the contents of msgobs.user.js to your institution's custom JavaScript file, or as a userscript in a browser extension like TamperMonkey (Chrome & Firefox).
 
-Ultra-Brief GreaseMonkey instructions:
-  1. Using Firefox, download and install the extension [GreaseMonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/?src=ss).
-  2. Click [here](https://github.com/sdjrice/msgobs/raw/master/msgobs.user.js) to install the msgobs as a userscript.
-  3. Hit Tools -> GreaseMonkey -> Manage User Scripts -> Message Observers Preferences and update the included pages to include your institution's Canvas URL.  
+Ultra-Brief TamperMonkey instructions:
+  1. Using Firefox, download and install the extension [TamperMonkey]https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/.
+  2. Click [here](https://github.com/sdjrice/msgobs/raw/master/msgobs.user.js) to install the msgobs as a userscript. Press 'Install' on the TamperMonkey window that appears.
+  3. Hit TamperMonkey -> Dashboard -> Edit Icon in Message Observers row -> Settings Tab and update the User Includes to include your institution's Canvas URL. E.g 'https://canvas.instructure.com/'
 
 To use the script without having to use a browser extension you'll need to add the contents of msgobs.user.js to your Canvas custom JavaScript file. More about that here: https://community.canvaslms.com/docs/DOC-3010. This will make the script active for all teachers in your organisation.
 
