@@ -3,7 +3,7 @@
 // @namespace   msgobs
 // @include     https://canvas.test.instructure.com/*
 // @include     https://canvas.instructure.com/*
-// @version     v0.06
+// @version     v0.07
 // @grant       none
 // ==/UserScript==
 
@@ -16,13 +16,13 @@
 // instead applying the script to your entire site.
 
 /*
- * MSGOBS v0.06
+ * MSGOBS v0.07
  * https:// github.com/sdjrice/msgobs
  * Stephen Rice
  * srice@scc.wa.edu.au
  */
 
- /*
+/*
   * Please Note:
   * There are currently two somewhat separate observer lookup methods within this script
   * The older method, which wasn't well suited to handling group lookups will be
@@ -54,19 +54,19 @@ var msgobs = {
 
   launch: function (type) {
     console.log('----------------');
-    console.log('MSGOBS \n v0.06 \nhttps://github.com/sdjrice/msgobs');
+    console.log('MSGOBS \n v0.07 \nhttps://github.com/sdjrice/msgobs');
     console.log('Stephen Rice \nsrice@scc.wa.edu.au');
     console.log('----------------');
 
     this.common.init();
 
     switch (type) {
-      case 'conversations':
-        this.conversations.init();
-        break;
-      case 'gbook':
-        this.gradebook.init();
-        break;
+    case 'conversations':
+      this.conversations.init();
+      break;
+    case 'gbook':
+      this.gradebook.init();
+      break;
     }
   },
 
@@ -198,18 +198,18 @@ var msgobs = {
           id = id.split('_');
 
           switch (id.length) {
-            case 1:
-              // user id
-              results.expand.push(['user', id[0]]);
-              break;
-            case 2:
-              // course, section
-              results.expand.push([id[0], id[1]]);
-              break;
-            case 3:
-              // course, section, type
-              results.expand.push([id[0], id[1], id[2]]);
-              break;
+          case 1:
+            // user id
+            results.expand.push(['user', id[0]]);
+            break;
+          case 2:
+            // course, section
+            results.expand.push([id[0], id[1]]);
+            break;
+          case 3:
+            // course, section, type
+            results.expand.push([id[0], id[1], id[2]]);
+            break;
           }
         });
       },
@@ -241,7 +241,8 @@ var msgobs = {
             results.users.forEach(function (v) {
               results.users.simplified.push({
                 id: v.id,
-                name: v.name
+                name: v.name,
+                userObj: v
               });
             });
             msgobs.common.getObservers.process.lookup.init(results);
@@ -262,47 +263,47 @@ var msgobs = {
             var options = false;
 
             switch (v[0]) {
-              case 'user':
-                if (results.contexts[0] === 'none') {
-                  options = {
-                    mode: 'users',
-                    id: v[1],
-                    query: '',
-                    type: ''
-                  };
-                } else {
-                  options = {
-                    mode: 'courses',
-                    id: results.contexts[0],
-                    query: 'search_users?search_term=' + v[1],
-                    type: ''
-                  };
-                }
-                break;
-              case 'course':
+            case 'user':
+              if (results.contexts[0] === 'none') {
+                options = {
+                  mode: 'users',
+                  id: v[1],
+                  query: '',
+                  type: ''
+                };
+              } else {
                 options = {
                   mode: 'courses',
-                  id: v[1],
-                  query: 'users',
-                  type: type
-                };
-                break;
-              case 'section':
-                options = {
-                  mode: 'sections',
-                  id: v[1],
-                  query: 'enrollments',
+                  id: results.contexts[0],
+                  query: 'users/' + v[1],
                   type: ''
                 };
-                break;
-              case 'group':
-                options = {
-                  mode: 'groups',
-                  id: v[1],
-                  query: 'users',
-                  type: ''
-                };
-                break;
+              }
+              break;
+            case 'course':
+              options = {
+                mode: 'courses',
+                id: v[1],
+                query: 'users',
+                type: type
+              };
+              break;
+            case 'section':
+              options = {
+                mode: 'sections',
+                id: v[1],
+                query: 'enrollments',
+                type: ''
+              };
+              break;
+            case 'group':
+              options = {
+                mode: 'groups',
+                id: v[1],
+                query: 'users',
+                type: ''
+              };
+              break;
             }
             msgobs.common.getEnrolmentsRecursively.init(options, callback, results);
           });
@@ -341,7 +342,7 @@ var msgobs = {
             },
 
             handle: function (data, status, results) {
-              results.contexts.getCount ++;
+              results.contexts.getCount++;
               data.forEach(function (v) {
                 if (results.contexts.indexOf(v.course_id) === -1) { // don't make duplicates
                   results.contexts.push(v.course_id);
@@ -403,7 +404,8 @@ var msgobs = {
                   var observerData = {
                     id: enrolment.user_id,
                     name: enrolment.user.name,
-                    observing: user.name
+                    observing: user.name,
+                    userObj: enrolment.user
                   };
                   // omit duplicate entries, add additional observees to existing entry.
                   var observerDuplicate = msgobs.common.searchObjArray(results.observers, observerData.id);
@@ -448,7 +450,7 @@ var msgobs = {
         collatedEnrolments.enrolments.push(data);
         collatedEnrolments.count++;
         if (collatedEnrolments.count >= collatedEnrolments.total) {
-         // oncomplete, call callback function.
+          // oncomplete, call callback function.
           var enrolments = [];
           collatedEnrolments.enrolments.forEach(function (v) {
             enrolments = enrolments.concat(v);
@@ -541,9 +543,6 @@ var msgobs = {
       recipientEl: '.ac-token'
     },
     init: function () {
-      var ctx = this;
-      // set bindings for buttons
-      var messagebox = document.getElementsByTagName('body');
       msgobs.common.btnAddObs.bind('click', function () {
         msgobs.conversations.getObserversInit();
       });
@@ -637,66 +636,61 @@ var msgobs = {
       });
 
       switch (this.step) {
-        case 1:
-          var context;
-          if (this.mode === 'user') {
-            context = 'none';
-            msgobs.common.notify(msgobs.common.txt.noContext, 'success');
-          } else {
-            context = this.courseID;
+      case 1:
+        var context;
+        if (this.mode === 'user') {
+          context = 'none';
+          msgobs.common.notify(msgobs.common.txt.noContext, 'success');
+        } else {
+          context = this.courseID;
+        }
+
+        var hasGroups = 0;
+        recipients.forEach(function (v) {
+          if (v.indexOf('course') !== -1 || v.indexOf('group') !== -1 || v.indexOf('section') !== -1) {
+            hasGroups = 1;
+          }
+        });
+
+        if (hasGroups) {
+          msgobs.common.notify(msgobs.common.txt.groupExpansion, 'success');
+        }
+
+        msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+        msgobs.common.btnRmvStu.addClass('disabled');
+        msgobs.common.getObservers.init(recipients, context, callback);
+
+        break;
+      case 2:
+        var observers = data[0];
+        var users = data[1];
+        var matchFlag = data[2];
+        msgobs.log(observers);
+        // complete!
+        if (observers.length || users.length) {
+          msgobs.conversations.clear();
+          this.insert(users, observers);
+
+          if (users.length && !observers.length && matchFlag) {
+            msgobs.common.notify(msgobs.common.txt.noNewObservers, 'success');
           }
 
-          var hasGroups = 0;
-          recipients.forEach(function (v) {
-            if (v.indexOf('course') !== -1 || v.indexOf('group') !== -1 || v.indexOf('section') !== -1) {
-              hasGroups = 1;
-            }
-          });
-
-          if (hasGroups) {
-            msgobs.common.notify(msgobs.common.txt.groupExpansion, 'success');
-          }
-
-          msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
-          msgobs.common.btnRmvStu.addClass('disabled');
-          msgobs.common.getObservers.init(recipients, context, callback);
-
-          break;
-        case 2:
-          var observers = data[0];
-          var users = data[1];
-          var matchFlag = data[2];
-          msgobs.log(observers);
-          // complete!
-          if (observers.length || users.length) {
-            msgobs.conversations.clear(observers.concat(users));
-            users.forEach(function (v) {
-              msgobs.conversations.insert(v, false);
-            });
-            observers.forEach(function (v) {
-              msgobs.conversations.insert(v, true);
-            });
-
-            if (users.length && !observers.length && matchFlag) {
-              msgobs.common.notify(msgobs.common.txt.noNewObservers, 'success');
-            }
-
-            if (users.length && !observers.length && !matchFlag) {
-              msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
-              msgobs.log('No observers found');
-            }
-
-            if (observers.length) {
-              msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
-            }
-            msgobs.log('Inserted results.');
-          } else {
+          if (users.length && !observers.length && !matchFlag) {
             msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
             msgobs.log('No observers found');
           }
-          msgobs.common.btnRmvStu.removeClass('disabled');
-          msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
-          break;
+
+          if (observers.length) {
+            msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
+          }
+          msgobs.log('Inserted results.');
+        } else {
+          msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
+          msgobs.log('No observers found');
+        }
+        msgobs.common.btnRmvStu.removeClass('disabled');
+        msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
+        break;
       }
     },
 
@@ -712,18 +706,36 @@ var msgobs = {
       return recipients;
     },
 
-    clear: function (arr) {
-      $(this.els.recipientList, this.els.dialog).empty();
+    clear: function () {
+      var deleteTokens = conversationsRouter.compose.recipientView.tokens.slice();
+      deleteTokens.forEach(function (tokenId) {
+        conversationsRouter.compose.recipientView._removeToken(tokenId);
+      });
     },
 
-    insert: function (user, observer) {
-      // add a list item, might need to update these classes occasionally.
-      if (observer) {
-        var obj = $('<li class="ac-token" title="Linked to: ' + user.observing + '" data-type="observer" style="background-color:' + msgobs.options.colour + '; border-color: rgba(0,0,0,0.10);">' + user.name + '<a href="#" class="ac-token-remove-btn"><i class="icon-x icon-messageRecipient--cancel"></i><span class="screenreader-only">Remove recipient ' + user.name + '</span></a><input name="recipients[]" value="' + user.id + '" type="hidden"></li>');
-      } else {
-        var obj = $('<li class="ac-token" data-type="user" style="border-color: rgba(0,0,0,0.10);">' + user.name + '<a href="#" class="ac-token-remove-btn"><i class="icon-x icon-messageRecipient--cancel"></i><span class="screenreader-only">Remove recipient ' + user.name + '</span></a><input name="recipients[]" value="' + user.id + '" type="hidden"></li>');
-      }
-      $(this.els.recipientList, this.els.dialog).append(obj);
+    insert: function (users, observers) {
+      users.forEach(function (user) {
+        window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+      });
+      observers.forEach(function (user) {
+        window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+      });
+
+      $('.ac-token', this.els.recipientList).each(function (i, el) {
+        observers.forEach(function (user) {
+          if ($('input', el)[0].value === user.id.toString()) {
+            $(el).attr('title', 'Linked to: ' + user.observing)
+              .attr('data-type', 'observer')
+              .attr('style', 'background-color:' + msgobs.options.colour + '; border-color: rgba(0,0,0,0.10);');
+          }
+        });
+
+        users.forEach(function (user) {
+          if ($('input', el)[0].value === user.id.toString()) {
+            $(el).attr('data-type', 'user');
+          }
+        });
+      });
     },
 
     removeStudentsInit: function () {
@@ -749,97 +761,97 @@ var msgobs = {
         removal;
 
       switch (this.mode) {
-        case 'user':
-          switch (this.removeStep) {
-            case 1:
-              msgobs.common.notify(msgobs.common.txt.noContextRmv, 'success');
-              // look up user enrolments.
-              if (this.getRecipientIds().length) {
-                msgobs.common.btnAddObs.addClass('disabled');
-                msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
-                recipients = this.getRecipientIds();
-                var ids = [];
-                recipients.forEach(function (v) {
-                  ids.push(v.id);
-                });
-                msgobs.log('Getting Enrolments for users.');
-                msgobs.common.getEnrolments(ids, 'users', callback);
-              } else {
-                msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
-              }
-              break;
-            case 2:
-              // process for enrolment type.
-              msgobs.log('User Enrolments:');
-              msgobs.log(data);
-              recipients = this.getRecipientIds();
-              msgobs.log('Recipient IDs:');
-              msgobs.log(recipients);
-
-              // Where users have a students enrolmentType, queue for removal
-              removal = [];
-              recipients.forEach(function (v) {
-                var enrolmentType = ctx.getEnrolmentStatus(v.id, data);
-                if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
-                  removal.push(v.id);
-                }
-              });
-              // remove matched StudentEnrollment ids.
-              msgobs.log('Matched StudentEnrollment removal IDs:');
-              msgobs.log(removal);
-              this.removeById(removal);
-              msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
-              msgobs.common.btnAddObs.removeClass('disabled');
-              break;
+      case 'user':
+        switch (this.removeStep) {
+        case 1:
+          msgobs.common.notify(msgobs.common.txt.noContextRmv, 'success');
+          // look up user enrolments.
+          if (this.getRecipientIds().length) {
+            msgobs.common.btnAddObs.addClass('disabled');
+            msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
+            recipients = this.getRecipientIds();
+            var ids = [];
+            recipients.forEach(function (v) {
+              ids.push(v.id);
+            });
+            msgobs.log('Getting Enrolments for users.');
+            msgobs.common.getEnrolments(ids, 'users', callback);
+          } else {
+            msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
           }
           break;
-        case 'course':
-          switch (this.removeStep) {
-            case 1:
-              // lookup course enrolments.
-              if (this.getRecipientIds().length) {
-                msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
-                msgobs.common.btnAddObs.addClass('disabled');
-                msgobs.log('Getting Enrolments for users.');
-                msgobs.common.getEnrolments([this.courseID], 'courses', callback);
-              } else {
-                msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
-              }
-              // now that I look at this, I think it's missing sections. Probably should fix that soon.
-              break;
-            case 2:
-              msgobs.log('Course Enrolments: ');
-              msgobs.log(data);
-              this.courseEnrolments = data;
-              msgobs.log('Getting course sections:');
-              msgobs.common.getCourseSections(this.courseID, callback);
-              break;
-            case 3:
-              msgobs.log('Course Sections: ');
-              msgobs.log(data);
-              msgobs.common.getEnrolments(data, 'sections', callback);
-              break;
-            case 4:
-              enrolments = this.courseEnrolments.concat(data);
+        case 2:
+          // process for enrolment type.
+          msgobs.log('User Enrolments:');
+          msgobs.log(data);
+          recipients = this.getRecipientIds();
+          msgobs.log('Recipient IDs:');
+          msgobs.log(recipients);
 
-              msgobs.log('All Enrolments: ');
-              msgobs.log(data);
-              recipients = this.getRecipientIds();
-              removal = [];
-              recipients.forEach(function (v) {
-                var enrolmentType = ctx.getEnrolmentStatus(v.id, enrolments);
-                if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
-                  removal.push(v.id);
-                }
-              });
-              msgobs.log('Matched StudentEnrollment removal IDs:');
-              msgobs.log(removal);
-              this.removeById(removal);
-              msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
-              msgobs.common.btnAddObs.removeClass('disabled');
-              break;
-          }
+          // Where users have a students enrolmentType, queue for removal
+          removal = [];
+          recipients.forEach(function (v) {
+            var enrolmentType = ctx.getEnrolmentStatus(v.id, data);
+            if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
+              removal.push(v.id);
+            }
+          });
+          // remove matched StudentEnrollment ids.
+          msgobs.log('Matched StudentEnrollment removal IDs:');
+          msgobs.log(removal);
+          this.removeById(removal);
+          msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
+          msgobs.common.btnAddObs.removeClass('disabled');
           break;
+        }
+        break;
+      case 'course':
+        switch (this.removeStep) {
+        case 1:
+          // lookup course enrolments.
+          if (this.getRecipientIds().length) {
+            msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
+            msgobs.common.btnAddObs.addClass('disabled');
+            msgobs.log('Getting Enrolments for users.');
+            msgobs.common.getEnrolments([this.courseID], 'courses', callback);
+          } else {
+            msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
+          }
+          // now that I look at this, I think it's missing sections. Probably should fix that soon.
+          break;
+        case 2:
+          msgobs.log('Course Enrolments: ');
+          msgobs.log(data);
+          this.courseEnrolments = data;
+          msgobs.log('Getting course sections:');
+          msgobs.common.getCourseSections(this.courseID, callback);
+          break;
+        case 3:
+          msgobs.log('Course Sections: ');
+          msgobs.log(data);
+          msgobs.common.getEnrolments(data, 'sections', callback);
+          break;
+        case 4:
+          var enrolments = this.courseEnrolments.concat(data);
+
+          msgobs.log('All Enrolments: ');
+          msgobs.log(data);
+          recipients = this.getRecipientIds();
+          removal = [];
+          recipients.forEach(function (v) {
+            var enrolmentType = ctx.getEnrolmentStatus(v.id, enrolments);
+            if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
+              removal.push(v.id);
+            }
+          });
+          msgobs.log('Matched StudentEnrollment removal IDs:');
+          msgobs.log(removal);
+          this.removeById(removal);
+          msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
+          msgobs.common.btnAddObs.removeClass('disabled');
+          break;
+        }
+        break;
       }
     },
 
@@ -968,45 +980,45 @@ var msgobs = {
       };
 
       switch (this.step) {
-        case 1:
-          this.removeObservers(); // cleanup previously inserted observers
+      case 1:
+        this.removeObservers(); // cleanup previously inserted observers
 
-          // swap buttons to prevent Canvas actions on send click.
-          msgobs.gradebook.els.btnCanvasSend.remove();
-          msgobs.gradebook.els.btnContainer.append(msgobs.gradebook.els.btnMsgobsSend);
-          msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
-          msgobs.common.btnRmvStu.addClass('disabled');
-          if (!this.getStudentList().length) { //  no studetns
-            msgobs.common.notify(msgobs.common.txt.noStudents, 'warning');
-            msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
-          } else {
-            // Get course enrolments.
-            msgobs.log('Course: ' + this.courseId);
-            msgobs.common.getEnrolments([this.courseId], 'courses', callback);
-          }
-          break;
-        case 2:
-          // store result of enrolments, get sections of present course.
-          msgobs.log('Course Enrolments: ');
-          msgobs.log(data);
-          // finalise the process
-
-          // concanentate earlier course enrolments with section enrolments.
-          var courseEnrolments = data;
-          // match student names to ids. Vulnerable to identical names.
-          var studentIds = this.getStudentIds(this.getStudentList(), courseEnrolments);
-          msgobs.log('Student IDs: ');
-          msgobs.log(studentIds);
-          // Match user's observing ids to student ids
-          var observerIds = msgobs.common.getMatchedObservers(studentIds, courseEnrolments);
-          msgobs.log('Matched observers: ');
-          msgobs.log(observerIds);
-          // insert the tokens to the ui, complete process with feedback.
-          this.insert(observerIds);
+        // swap buttons to prevent Canvas actions on send click.
+        msgobs.gradebook.els.btnCanvasSend.remove();
+        msgobs.gradebook.els.btnContainer.append(msgobs.gradebook.els.btnMsgobsSend);
+        msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+        msgobs.common.btnRmvStu.addClass('disabled');
+        if (!this.getStudentList().length) { //  no studetns
+          msgobs.common.notify(msgobs.common.txt.noStudents, 'warning');
           msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
-          msgobs.common.btnRmvStu.removeClass('disabled');
-          msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
-          break;
+        } else {
+          // Get course enrolments.
+          msgobs.log('Course: ' + this.courseId);
+          msgobs.common.getEnrolments([this.courseId], 'courses', callback);
+        }
+        break;
+      case 2:
+        // store result of enrolments, get sections of present course.
+        msgobs.log('Course Enrolments: ');
+        msgobs.log(data);
+        // finalise the process
+
+        // concanentate earlier course enrolments with section enrolments.
+        var courseEnrolments = data;
+        // match student names to ids. Vulnerable to identical names.
+        var studentIds = this.getStudentIds(this.getStudentList(), courseEnrolments);
+        msgobs.log('Student IDs: ');
+        msgobs.log(studentIds);
+        // Match user's observing ids to student ids
+        var observerIds = msgobs.common.getMatchedObservers(studentIds, courseEnrolments);
+        msgobs.log('Matched observers: ');
+        msgobs.log(observerIds);
+        // insert the tokens to the ui, complete process with feedback.
+        this.insert(observerIds);
+        msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
+        msgobs.common.btnRmvStu.removeClass('disabled');
+        msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
+        break;
       }
     },
 
@@ -1029,7 +1041,7 @@ var msgobs = {
       // returns student ids from students names matched with ids found in enrolment data
       var ids = [];
       studentNames.forEach(function (studentName) {
-        enrolments.forEach(function (enrolment, i) {
+        enrolments.forEach(function (enrolment) {
           if (enrolment.user.name == studentName.name) {
             ids.push({
               id: enrolment.user.id,
@@ -1077,7 +1089,7 @@ var msgobs = {
       // return list of recipient items from student list element.
       var recipients = [];
       $('li', msgobs.gradebook.els.studentList).each(function () {
-        el = $(this);
+        var  el = $(this);
         // if the item is displayed, it should be part of the message recipients.
         if (el.attr('style').indexOf('list-item') !== -1) {
           recipients.push(el.attr('data-id'));
@@ -1197,7 +1209,7 @@ var msgobs = {
   },
 
   logItems: [],
-  log: function (msg, warn, err) {
+  log: function (msg) {
     var date = new Date();
 
     function zero (str) {
@@ -1206,14 +1218,14 @@ var msgobs = {
         str;
     } // derp. no idea how to use dates.
 
-    stamp = '[' + zero(date.getHours()) + ':' + zero(date.getMinutes()) + ':' + zero(date.getSeconds()) + '] ';
+    var stamp = '[' + zero(date.getHours()) + ':' + zero(date.getMinutes()) + ':' + zero(date.getSeconds()) + '] ';
     if (msgobs.options.log) {
       console.log(stamp + JSON.stringify(msg));
     }
     this.logItems.push(stamp + JSON.stringify(msg));
   },
   applog: function () {
-    console.dir(logitems);
+    console.dir(this.logitems);
   }
 };
 
