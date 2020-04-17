@@ -2,7 +2,7 @@
 A JavaScript modification for the Canvas learning management system which adds the ability to message the observers of students on the Inbox and Gradebook/Marksbook pages.
 
 ## Changelog
-Version 0.07 on 11/10/17
+Version 0.07 on 17/04/20
 - Fixed issue where conversations (Inbox) recipients would become invalid after a recipient was removed. 
 
 Version 0.06 on 11/10/17
