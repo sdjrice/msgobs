@@ -2,6 +2,9 @@
 A JavaScript modification for the Canvas learning management system which adds the ability to message the observers of students on the Inbox and Gradebook/Marksbook pages.
 
 ## Changelog
+Version 0.08 on 17/04/20
+- Fixed conversations (Inbox) issue for intances with the faculty journal enabled.
+
 Version 0.07 on 17/04/20
 - Fixed issue where conversations (Inbox) recipients would become invalid after a recipient was removed. 
 
@@ -39,7 +42,7 @@ Using the selections from the 'Message Students Who' criteria dropdown box you s
 * explain why assessments haven’t been marked (Haven’t been marked option).
 
 From the Inbox page you'll be able to
- * Easily send a message to the parents of a specific selection of students without having to find their email addresses manually through some other means.
+ * Easily send a message to the parents of a specific selection of students.
 
 ## Requirements
 * Observers will need to be enrolled in courses and linked to students, either manually or via SIS Import.

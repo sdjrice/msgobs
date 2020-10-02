@@ -3,7 +3,7 @@
 // @namespace   msgobs
 // @include     https://canvas.test.instructure.com/*
 // @include     https://canvas.instructure.com/*
-// @version     v0.07
+// @version     v0.08
 // @grant       none
 // ==/UserScript==
 
@@ -16,7 +16,7 @@
 // instead applying the script to your entire site.
 
 /*
- * MSGOBS v0.07
+ * MSGOBS v0.08
  * https:// github.com/sdjrice/msgobs
  * Stephen Rice
  * srice@scc.wa.edu.au
@@ -54,7 +54,7 @@ var msgobs = {
 
   launch: function (type) {
     console.log('----------------');
-    console.log('MSGOBS \n v0.07 \nhttps://github.com/sdjrice/msgobs');
+    console.log('MSGOBS \n v0.08 \nhttps://github.com/sdjrice/msgobs');
     console.log('Stephen Rice \nsrice@scc.wa.edu.au');
     console.log('----------------');
 
@@ -715,10 +715,24 @@ var msgobs = {
 
     insert: function (users, observers) {
       users.forEach(function (user) {
-        window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+          user.userObj.id = String(user.userObj.id );
+          try {
+              window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+          } catch (e) {
+              console.log('An error occured when adding tokens for the following user:');
+              console.log(user);
+              console.log(e);
+          }
       });
       observers.forEach(function (user) {
-        window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+          user.userObj.id = String(user.userObj.id );
+          try {
+            window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+        } catch (e) {
+            console.log('An error occured when adding tokens for the following user:');
+            console.log(user);
+            console.log(e);
+        }
       });
 
       $('.ac-token', this.els.recipientList).each(function (i, el) {
