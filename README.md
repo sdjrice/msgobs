@@ -2,7 +2,7 @@
 A JavaScript modification for the Canvas learning management system which adds the ability to message the observers of students on the Inbox and Gradebook pages.
 
 ## Donate
-If you or your institution has found MSGOBS useful over the years and you'd like to make a small contribution to its upkeep, you may an do so here: [Donate](https://www.paypal.com/donate?business=WUJDYC8N3G63S&currency_code=AUD)
+If you or your institution has found MSGOBS useful over the years and you'd like to make a small contribution to its upkeep, you may do so here: [Donate with Paypal](https://www.paypal.com/donate?business=WUJDYC8N3G63S&currency_code=AUD)
 
 ## Description
 Canvas has some excellent communications features, namely the ability to message students who have not submitted or scored above or below a particular grade in any assignment appearing in the Gradesbook by using the 'Message Students Who..' option. Unfortunately for K-12 institutions, there is no option to include observers (parents) in the recipients of these messages.
@@ -16,14 +16,14 @@ Version 1.0 on 15/03/21
 - Re-written for ES2020.
 - Slight lookup speed improvement.
 - Fixed issue where students on gradebook with the same name could not be distinguished between. 
-- Fixed issue where that occured when replying to a messages as a user with some admin privileges, but not all. In this scenario, MSGOBS now asks the user to select a course for observer lookup. 
+- Fixed issue where that occurred when replying to a messages as a user with some admin privileges, but not all. In this scenario, MSGOBS now asks the user to select a course for observer lookup. 
 - Fixed issue with colour highlighting of observers after the insert observers button was pressed for a second time. 
 - Added warning message for replies in conversations that will create a group messages for all recipients. 
 - Added Observer and Student removal counts to success messages. 
 - Changed conversations behaviour as an admin sending a message. MSGOBS now asks the user to select a course for the observer lookup, rather than trying all enrolments for the user (which took a long time). 
 
 Version 0.08 on 17/04/20
-- Fixed conversations (Inbox) issue for intances with the faculty journal enabled.
+- Fixed conversations (Inbox) issue for instances with the faculty journal enabled.
 
 Version 0.07 on 17/04/20
 - Fixed issue where conversations (Inbox) recipients would become invalid after a recipient was removed. 
@@ -88,7 +88,7 @@ send message dialog (only if the user has at least one teacher enrolment) and th
 
 #### Notes
 * You cannot send messages to, nor perform lookups for, individuals to which the user would not normally have access. Using msgobs does not give greater access to individuals than they would normally have.
-* When testing, be sure that the individuals to which you are sending test messages have confirmed their accounts (by clicking the email link). You cannot send messages to unverified users. A good test is to make sure you can actually send messages to the recipients without any modifications (e.g in the Marksbook/Gradebook, don't click include observers and make sure the message will actually send!).
+* When testing, be sure that the individuals to which you are sending test messages have confirmed their accounts (by clicking the email link). You cannot send messages to unverified users.
 
 ## Known Issues
 ### HTML Integration
