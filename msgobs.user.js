@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        Message Observers
 // @namespace   msgobs
-// @include     https://canvas.test.instructure.com/*
+// @include     https://scc.test.instructure.com/*
 // @include     https://canvas.instructure.com/*
-// @version     v0.08
+// @version     v0.09
 // @grant       none
 // ==/UserScript==
 
@@ -16,7 +16,7 @@
 // instead applying the script to your entire site.
 
 /*
- * MSGOBS v0.08
+ * MSGOBS v0.09
  * https:// github.com/sdjrice/msgobs
  * Stephen Rice
  * srice@scc.wa.edu.au
@@ -38,7 +38,7 @@ var msgobs = {
     busyText: 'Working...', // text to display while observers are being processed.
     btnWidth: '110px',
     autoTickIndividualMsgCheckbox: true,
-    log: false // output log in the browser console.
+    log: 0 // output log in the browser console.
   },
 
   init: function () {
@@ -54,19 +54,19 @@ var msgobs = {
 
   launch: function (type) {
     console.log('----------------');
-    console.log('MSGOBS \n v0.08 \nhttps://github.com/sdjrice/msgobs');
+    console.log('MSGOBS \n v0.09 \nhttps://github.com/sdjrice/msgobs');
     console.log('Stephen Rice \nsrice@scc.wa.edu.au');
     console.log('----------------');
 
     this.common.init();
 
     switch (type) {
-    case 'conversations':
-      this.conversations.init();
-      break;
-    case 'gbook':
-      this.gradebook.init();
-      break;
+      case 'conversations':
+        this.conversations.init();
+        break;
+      case 'gbook':
+        this.gradebook.init();
+        break;
     }
   },
 
@@ -82,7 +82,9 @@ var msgobs = {
       removedStudents: 'Removed students.',
       noRecipients: 'There are no recipients in the addressee field.',
       noContext: 'Notice: You have not selected a course context for your search. The observer lookup may take some time and will include observer matches from <strong>all courses.</strong>',
+      noContextErr: 'There\'s a problem detecting your message\'s course context. The observer lookup may take some time and will include observer matches from <strong>all courses</strong> to which you have access.',
       noContextRmv: 'Notice: You have not selected a course context for your search. The removal lookup will remove recipients who have a student enrolment in <strong>any course.</strong>',
+      noContextRmvFail: 'There was a problem detecting the course context of your message. Please send a new message or remove students manually.',
       noNewObservers: 'The recipient list already included all matched observers.',
       groupExpansion: 'Your recipient list contains groups. Groups will be expanded into their respective members.'
     },
@@ -164,7 +166,7 @@ var msgobs = {
       init: function (recipients, context, callback) {
         msgobs.log('--Observers 2.0--');
 
-        function Observers () {
+        function Observers() {
           this.contexts = [context];
           this.contexts.count = 0;
           this.contexts.total = 0;
@@ -193,23 +195,23 @@ var msgobs = {
         this.process.init(results);
       },
 
-      sortRecipients (recipients, results) {
+      sortRecipients(recipients, results) {
         recipients.forEach(function (id) {
           id = id.split('_');
 
           switch (id.length) {
-          case 1:
-            // user id
-            results.expand.push(['user', id[0]]);
-            break;
-          case 2:
-            // course, section
-            results.expand.push([id[0], id[1]]);
-            break;
-          case 3:
-            // course, section, type
-            results.expand.push([id[0], id[1], id[2]]);
-            break;
+            case 1:
+              // user id
+              results.expand.push(['user', id[0]]);
+              break;
+            case 2:
+              // course, section
+              results.expand.push([id[0], id[1]]);
+              break;
+            case 3:
+              // course, section, type
+              results.expand.push([id[0], id[1], id[2]]);
+              break;
           }
         });
       },
@@ -223,6 +225,7 @@ var msgobs = {
 
         handle: function (data, status, results) {
           results.expand.count++;
+
           if (data.forEach) {
             data.forEach(function (v) {
               if (v.user) {
@@ -238,13 +241,6 @@ var msgobs = {
           msgobs.log('Expand count: ' + results.expand.count + ' Total: ' + results.users.length);
 
           if (results.expand.count === results.expand.total) {
-            results.users.forEach(function (v) {
-              results.users.simplified.push({
-                id: v.id,
-                name: v.name,
-                userObj: v
-              });
-            });
             msgobs.common.getObservers.process.lookup.init(results);
           }
         },
@@ -263,47 +259,47 @@ var msgobs = {
             var options = false;
 
             switch (v[0]) {
-            case 'user':
-              if (results.contexts[0] === 'none') {
-                options = {
-                  mode: 'users',
-                  id: v[1],
-                  query: '',
-                  type: ''
-                };
-              } else {
+              case 'user':
+                if (results.contexts[0] === 'none') {
+                  options = {
+                    mode: 'users',
+                    id: v[1],
+                    query: '',
+                    type: ''
+                  };
+                } else {
+                  options = {
+                    mode: 'courses',
+                    id: results.contexts[0],
+                    query: 'users/' + v[1],
+                    type: ''
+                  };
+                }
+                break;
+              case 'course':
                 options = {
                   mode: 'courses',
-                  id: results.contexts[0],
-                  query: 'users/' + v[1],
+                  id: v[1],
+                  query: 'users',
+                  type: type
+                };
+                break;
+              case 'section':
+                options = {
+                  mode: 'sections',
+                  id: v[1],
+                  query: 'enrollments',
                   type: ''
                 };
-              }
-              break;
-            case 'course':
-              options = {
-                mode: 'courses',
-                id: v[1],
-                query: 'users',
-                type: type
-              };
-              break;
-            case 'section':
-              options = {
-                mode: 'sections',
-                id: v[1],
-                query: 'enrollments',
-                type: ''
-              };
-              break;
-            case 'group':
-              options = {
-                mode: 'groups',
-                id: v[1],
-                query: 'users',
-                type: ''
-              };
-              break;
+                break;
+              case 'group':
+                options = {
+                  mode: 'groups',
+                  id: v[1],
+                  query: 'users',
+                  type: ''
+                };
+                break;
             }
             msgobs.common.getEnrolmentsRecursively.init(options, callback, results);
           });
@@ -330,15 +326,33 @@ var msgobs = {
 
             contexts: function (results) {
               var callback = this.handle;
-              results.users.forEach(function (v) {
-                var options = {
-                  mode: 'users',
-                  id: v.id,
-                  query: 'enrollments?state=active',
-                  type: ''
-                };
-                msgobs.common.getEnrolmentsRecursively.init(options, callback, results);
-              });
+
+              // fix error occurring when no message context is set
+              // but account is not able to message account context.
+              if (!ENV.CONVERSATIONS.CAN_MESSAGE_ACCOUNT_CONTEXT) {
+                results.users.forEach(function (v) {
+                  var options = {
+                    mode: 'users',
+                    id: v.id,
+                    query: 'enrollments', // ?state=active',
+                    type: ''
+                  };
+                  msgobs.common.getEnrolmentsRecursively.init(options, callback, results);
+                });
+
+
+              } else {
+                results.users.forEach(function (v) {
+                  var options = {
+                    mode: 'users',
+                    id: v.id,
+                    query: 'enrollments?state=active',
+                    type: ''
+                  };
+                  msgobs.common.getEnrolmentsRecursively.init(options, callback, results);
+                });
+
+              }
             },
 
             handle: function (data, status, results) {
@@ -376,7 +390,25 @@ var msgobs = {
               if (v.associated_user_id) {
                 results.enrolments.push(v);
               }
+              if (msgobs.conversations.brokenAccountContext) {
+                msgobs.conversations.originalRecipients.forEach((id) => {
+                  console.log('restore users:' + id + ' # ' + v.user_id)
+                  if (id.toString() === v.user_id.toString()) {
+                    results.users.push(v.user);
+                  }
+                });
+
+
+              }
             });
+
+            results.users.forEach((user, index, array) => {
+              if (user.id.toString() === ENV.current_user_id.toString()) {
+                console.log('deleting:' + array[index].id);
+                results.users.splice(index, 1);
+              }
+            })
+            console.log(results.users);
 
             msgobs.log('Enrolments Count: ' + results.contexts.count + 'Total: ' + results.contexts.total);
 
@@ -391,6 +423,7 @@ var msgobs = {
         match: {
           init: function (results) {
             msgobs.log('--- Matching Results ---');
+            console.log(results);
             this.match(results);
           },
 
@@ -412,7 +445,7 @@ var msgobs = {
 
                   // below is a probably pointless check
                   // var userDuplicate = msgobs.common.searchObjArray(results.users.simplified, user.id);
-                  var userObserverDuplicate = msgobs.common.searchObjArray(results.users.simplified, observerData.id);
+                  var userObserverDuplicate = msgobs.common.searchObjArray(results.users, observerData.id);
                   if (observerDuplicate === -1 && userObserverDuplicate === -1) {
                     results.observers.push(observerData);
                   } else if (observerDuplicate > -1) {
@@ -431,13 +464,13 @@ var msgobs = {
       },
       complete: function (results) {
         // maybe return the whole object, eh?
-        results.callback([results.observers, results.users.simplified, results.matchFlag]);
+        results.callback([results.observers, results.users, results.matchFlag]);
       }
     },
 
     // old lookup methods below. Still used in gradebook lookups.
     getEnrolments: function (id, mode, returnCallback) {
-      function CollatedEnrolments () {
+      function CollatedEnrolments() {
         this.total = id.length;
         this.count = 0;
         this.enrolments = [];
@@ -610,6 +643,7 @@ var msgobs = {
       msgobs.log('Getting Observers Init..');
       this.step = 0;
       this.mode = '';
+      this.brokenAccountContext = 0;
 
       var recipients = this.getRecipientIds();
       if (!recipients.length) {
@@ -625,7 +659,7 @@ var msgobs = {
       msgobs.log('-----------------');
       msgobs.log('GetObservers Mode: [' + this.mode + '] Step: ' + this.step);
 
-      var callback = function getObservers (data) {
+      var callback = function getObservers(data) {
         msgobs.log('Returning to original Caller..');
         msgobs.conversations.getObservers(data);
       };
@@ -636,62 +670,71 @@ var msgobs = {
       });
 
       switch (this.step) {
-      case 1:
-        var context;
-        if (this.mode === 'user') {
-          context = 'none';
-          msgobs.common.notify(msgobs.common.txt.noContext, 'success');
-        } else {
-          context = this.courseID;
-        }
-
-        var hasGroups = 0;
-        recipients.forEach(function (v) {
-          if (v.indexOf('course') !== -1 || v.indexOf('group') !== -1 || v.indexOf('section') !== -1) {
-            hasGroups = 1;
-          }
-        });
-
-        if (hasGroups) {
-          msgobs.common.notify(msgobs.common.txt.groupExpansion, 'success');
-        }
-
-        msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
-        msgobs.common.btnRmvStu.addClass('disabled');
-        msgobs.common.getObservers.init(recipients, context, callback);
-
-        break;
-      case 2:
-        var observers = data[0];
-        var users = data[1];
-        var matchFlag = data[2];
-        msgobs.log(observers);
-        // complete!
-        if (observers.length || users.length) {
-          msgobs.conversations.clear();
-          this.insert(users, observers);
-
-          if (users.length && !observers.length && matchFlag) {
-            msgobs.common.notify(msgobs.common.txt.noNewObservers, 'success');
+        case 1:
+          var context;
+          if (this.mode === 'user') {
+            context = 'none';
+            // Fix no context error when account can't message account context
+            if (!ENV.CONVERSATIONS.CAN_MESSAGE_ACCOUNT_CONTEXT) {
+              this.originalRecipients = recipients;
+              recipients = [ENV.current_user_id];
+              this.brokenAccountContext = 1;
+              msgobs.common.notify(msgobs.common.txt.noContextErr, 'warning');
+            } else {
+              msgobs.common.notify(msgobs.common.txt.noContext, 'success');
+            }
+          } else {
+            context = this.courseID;
           }
 
-          if (users.length && !observers.length && !matchFlag) {
+          var hasGroups = 0;
+          recipients.forEach(function (v) {
+            if (v.indexOf('course') !== -1 || v.indexOf('group') !== -1 || v.indexOf('section') !== -1) {
+              hasGroups = 1;
+            }
+          });
+
+          if (hasGroups) {
+            msgobs.common.notify(msgobs.common.txt.groupExpansion, 'success');
+          }
+
+          msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+          msgobs.common.btnRmvStu.addClass('disabled');
+          msgobs.common.getObservers.init(recipients, context, callback);
+
+          break;
+        case 2:
+          var observers = data[0];
+          var users = data[1];
+          var matchFlag = data[2];
+          msgobs.log(observers);
+          // complete!
+          if (observers.length || users.length) {
+            msgobs.conversations.clear();
+            this.insert(users, observers);
+
+            if (users.length && !observers.length && matchFlag) {
+              msgobs.common.notify(msgobs.common.txt.noNewObservers, 'success');
+            }
+
+            if (users.length && !observers.length && !matchFlag) {
+              msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
+              msgobs.log('No observers found');
+            }
+
+            if (observers.length) {
+              msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
+            }
+            msgobs.log('Inserted results.');
+          } else {
             msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
             msgobs.log('No observers found');
           }
-
-          if (observers.length) {
-            msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
-          }
-          msgobs.log('Inserted results.');
-        } else {
-          msgobs.common.notify(msgobs.common.txt.addObsNone, 'warning');
-          msgobs.log('No observers found');
-        }
-        msgobs.common.btnRmvStu.removeClass('disabled');
-        msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
-        break;
+          msgobs.common.btnRmvStu.removeClass('disabled');
+          msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
+          break;
       }
+      console.log(recipients);
     },
 
     getRecipientIds: function () {
@@ -715,23 +758,23 @@ var msgobs = {
 
     insert: function (users, observers) {
       users.forEach(function (user) {
-          user.userObj.id = String(user.userObj.id );
-          try {
-              window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
-          } catch (e) {
-              console.log('An error occured when adding tokens for the following user:');
-              console.log(user);
-              console.log(e);
-          }
+        user.id = String(user.id);
+        try {
+          window.conversationsRouter.compose.recipientView.setTokens([user]);
+        } catch (e) {
+          console.log('An error occured when adding tokens for the following user:');
+          console.log(user);
+          console.log(e);
+        }
       });
       observers.forEach(function (user) {
-          user.userObj.id = String(user.userObj.id );
-          try {
-            window.conversationsRouter.compose.recipientView.setTokens([user.userObj]);
+        user.id = String(user.id);
+        try {
+          window.conversationsRouter.compose.recipientView.setTokens([user]);
         } catch (e) {
-            console.log('An error occured when adding tokens for the following user:');
-            console.log(user);
-            console.log(e);
+          console.log('An error occured when adding tokens for the following user:');
+          console.log(user);
+          console.log(e);
         }
       });
 
@@ -775,97 +818,101 @@ var msgobs = {
         removal;
 
       switch (this.mode) {
-      case 'user':
-        switch (this.removeStep) {
-        case 1:
-          msgobs.common.notify(msgobs.common.txt.noContextRmv, 'success');
-          // look up user enrolments.
-          if (this.getRecipientIds().length) {
-            msgobs.common.btnAddObs.addClass('disabled');
-            msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
-            recipients = this.getRecipientIds();
-            var ids = [];
-            recipients.forEach(function (v) {
-              ids.push(v.id);
-            });
-            msgobs.log('Getting Enrolments for users.');
-            msgobs.common.getEnrolments(ids, 'users', callback);
-          } else {
-            msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
+        case 'user':
+          switch (this.removeStep) {
+            case 1:
+              if (!ENV.CONVERSATIONS.CAN_MESSAGE_ACCOUNT_CONTEXT) {
+                msgobs.common.notify(msgobs.common.txt.noContextRmvFail, 'error');
+              } else {
+                msgobs.common.notify(msgobs.common.txt.noContextRmv, 'success');
+                // look up user enrolments.
+                if (this.getRecipientIds().length) {
+                  msgobs.common.btnAddObs.addClass('disabled');
+                  msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
+                  recipients = this.getRecipientIds();
+                  var ids = [];
+                  recipients.forEach(function (v) {
+                    ids.push(v.id);
+                  });
+                  msgobs.log('Getting Enrolments for users.');
+                  msgobs.common.getEnrolments(ids, 'users', callback);
+                } else {
+                  msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
+                }
+              }
+              break;
+            case 2:
+              // process for enrolment type.
+              msgobs.log('User Enrolments:');
+              msgobs.log(data);
+              recipients = this.getRecipientIds();
+              msgobs.log('Recipient IDs:');
+              msgobs.log(recipients);
+
+              // Where users have a students enrolmentType, queue for removal
+              removal = [];
+              recipients.forEach(function (v) {
+                var enrolmentType = ctx.getEnrolmentStatus(v.id, data);
+                if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
+                  removal.push(v.id);
+                }
+              });
+              // remove matched StudentEnrollment ids.
+              msgobs.log('Matched StudentEnrollment removal IDs:');
+              msgobs.log(removal);
+              this.removeById(removal);
+              msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
+              msgobs.common.btnAddObs.removeClass('disabled');
+              break;
           }
           break;
-        case 2:
-          // process for enrolment type.
-          msgobs.log('User Enrolments:');
-          msgobs.log(data);
-          recipients = this.getRecipientIds();
-          msgobs.log('Recipient IDs:');
-          msgobs.log(recipients);
+        case 'course':
+          switch (this.removeStep) {
+            case 1:
+              // lookup course enrolments.
+              if (this.getRecipientIds().length) {
+                msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
+                msgobs.common.btnAddObs.addClass('disabled');
+                msgobs.log('Getting Enrolments for users.');
+                msgobs.common.getEnrolments([this.courseID], 'courses', callback);
+              } else {
+                msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
+              }
+              // now that I look at this, I think it's missing sections. Probably should fix that soon.
+              break;
+            case 2:
+              msgobs.log('Course Enrolments: ');
+              msgobs.log(data);
+              this.courseEnrolments = data;
+              msgobs.log('Getting course sections:');
+              msgobs.common.getCourseSections(this.courseID, callback);
+              break;
+            case 3:
+              msgobs.log('Course Sections: ');
+              msgobs.log(data);
+              msgobs.common.getEnrolments(data, 'sections', callback);
+              break;
+            case 4:
+              var enrolments = this.courseEnrolments.concat(data);
 
-          // Where users have a students enrolmentType, queue for removal
-          removal = [];
-          recipients.forEach(function (v) {
-            var enrolmentType = ctx.getEnrolmentStatus(v.id, data);
-            if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
-              removal.push(v.id);
-            }
-          });
-          // remove matched StudentEnrollment ids.
-          msgobs.log('Matched StudentEnrollment removal IDs:');
-          msgobs.log(removal);
-          this.removeById(removal);
-          msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
-          msgobs.common.btnAddObs.removeClass('disabled');
-          break;
-        }
-        break;
-      case 'course':
-        switch (this.removeStep) {
-        case 1:
-          // lookup course enrolments.
-          if (this.getRecipientIds().length) {
-            msgobs.common.btnRmvStu.addClass('disabled').text(msgobs.options.busyText);
-            msgobs.common.btnAddObs.addClass('disabled');
-            msgobs.log('Getting Enrolments for users.');
-            msgobs.common.getEnrolments([this.courseID], 'courses', callback);
-          } else {
-            msgobs.common.notify(msgobs.common.txt.noStudentsRmv, 'warning');
+              msgobs.log('All Enrolments: ');
+              msgobs.log(data);
+              recipients = this.getRecipientIds();
+              removal = [];
+              recipients.forEach(function (v) {
+                var enrolmentType = ctx.getEnrolmentStatus(v.id, enrolments);
+                if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
+                  removal.push(v.id);
+                }
+              });
+              msgobs.log('Matched StudentEnrollment removal IDs:');
+              msgobs.log(removal);
+              this.removeById(removal);
+              msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
+              msgobs.common.btnAddObs.removeClass('disabled');
+              break;
           }
-          // now that I look at this, I think it's missing sections. Probably should fix that soon.
           break;
-        case 2:
-          msgobs.log('Course Enrolments: ');
-          msgobs.log(data);
-          this.courseEnrolments = data;
-          msgobs.log('Getting course sections:');
-          msgobs.common.getCourseSections(this.courseID, callback);
-          break;
-        case 3:
-          msgobs.log('Course Sections: ');
-          msgobs.log(data);
-          msgobs.common.getEnrolments(data, 'sections', callback);
-          break;
-        case 4:
-          var enrolments = this.courseEnrolments.concat(data);
-
-          msgobs.log('All Enrolments: ');
-          msgobs.log(data);
-          recipients = this.getRecipientIds();
-          removal = [];
-          recipients.forEach(function (v) {
-            var enrolmentType = ctx.getEnrolmentStatus(v.id, enrolments);
-            if (enrolmentType.indexOf('StudentEnrollment') !== -1) {
-              removal.push(v.id);
-            }
-          });
-          msgobs.log('Matched StudentEnrollment removal IDs:');
-          msgobs.log(removal);
-          this.removeById(removal);
-          msgobs.common.btnRmvStu.removeClass('disabled').text(msgobs.options.removeText);
-          msgobs.common.btnAddObs.removeClass('disabled');
-          break;
-        }
-        break;
       }
     },
 
@@ -994,45 +1041,45 @@ var msgobs = {
       };
 
       switch (this.step) {
-      case 1:
-        this.removeObservers(); // cleanup previously inserted observers
+        case 1:
+          this.removeObservers(); // cleanup previously inserted observers
 
-        // swap buttons to prevent Canvas actions on send click.
-        msgobs.gradebook.els.btnCanvasSend.remove();
-        msgobs.gradebook.els.btnContainer.append(msgobs.gradebook.els.btnMsgobsSend);
-        msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
-        msgobs.common.btnRmvStu.addClass('disabled');
-        if (!this.getStudentList().length) { //  no studetns
-          msgobs.common.notify(msgobs.common.txt.noStudents, 'warning');
+          // swap buttons to prevent Canvas actions on send click.
+          msgobs.gradebook.els.btnCanvasSend.remove();
+          msgobs.gradebook.els.btnContainer.append(msgobs.gradebook.els.btnMsgobsSend);
+          msgobs.common.btnAddObs.addClass('disabled').text(msgobs.options.busyText);
+          msgobs.common.btnRmvStu.addClass('disabled');
+          if (!this.getStudentList().length) { //  no studetns
+            msgobs.common.notify(msgobs.common.txt.noStudents, 'warning');
+            msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
+          } else {
+            // Get course enrolments.
+            msgobs.log('Course: ' + this.courseId);
+            msgobs.common.getEnrolments([this.courseId], 'courses', callback);
+          }
+          break;
+        case 2:
+          // store result of enrolments, get sections of present course.
+          msgobs.log('Course Enrolments: ');
+          msgobs.log(data);
+          // finalise the process
+
+          // concanentate earlier course enrolments with section enrolments.
+          var courseEnrolments = data;
+          // match student names to ids. Vulnerable to identical names.
+          var studentIds = this.getStudentIds(this.getStudentList(), courseEnrolments);
+          msgobs.log('Student IDs: ');
+          msgobs.log(studentIds);
+          // Match user's observing ids to student ids
+          var observerIds = msgobs.common.getMatchedObservers(studentIds, courseEnrolments);
+          msgobs.log('Matched observers: ');
+          msgobs.log(observerIds);
+          // insert the tokens to the ui, complete process with feedback.
+          this.insert(observerIds);
           msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
-        } else {
-          // Get course enrolments.
-          msgobs.log('Course: ' + this.courseId);
-          msgobs.common.getEnrolments([this.courseId], 'courses', callback);
-        }
-        break;
-      case 2:
-        // store result of enrolments, get sections of present course.
-        msgobs.log('Course Enrolments: ');
-        msgobs.log(data);
-        // finalise the process
-
-        // concanentate earlier course enrolments with section enrolments.
-        var courseEnrolments = data;
-        // match student names to ids. Vulnerable to identical names.
-        var studentIds = this.getStudentIds(this.getStudentList(), courseEnrolments);
-        msgobs.log('Student IDs: ');
-        msgobs.log(studentIds);
-        // Match user's observing ids to student ids
-        var observerIds = msgobs.common.getMatchedObservers(studentIds, courseEnrolments);
-        msgobs.log('Matched observers: ');
-        msgobs.log(observerIds);
-        // insert the tokens to the ui, complete process with feedback.
-        this.insert(observerIds);
-        msgobs.common.btnAddObs.removeClass('disabled').text(msgobs.options.observersText);
-        msgobs.common.btnRmvStu.removeClass('disabled');
-        msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
-        break;
+          msgobs.common.btnRmvStu.removeClass('disabled');
+          msgobs.common.notify(msgobs.common.txt.addObsSuccess, 'success');
+          break;
       }
     },
 
@@ -1103,7 +1150,7 @@ var msgobs = {
       // return list of recipient items from student list element.
       var recipients = [];
       $('li', msgobs.gradebook.els.studentList).each(function () {
-        var  el = $(this);
+        var el = $(this);
         // if the item is displayed, it should be part of the message recipients.
         if (el.attr('style').indexOf('list-item') !== -1) {
           recipients.push(el.attr('data-id'));
@@ -1226,11 +1273,11 @@ var msgobs = {
   log: function (msg) {
     var date = new Date();
 
-    function zero (str) {
+    function zero(str) {
       return str.toString().length < 2 ?
         '0' + str :
         str;
-    } // derp. no idea how to use dates.
+    } 
 
     var stamp = '[' + zero(date.getHours()) + ':' + zero(date.getMinutes()) + ':' + zero(date.getSeconds()) + '] ';
     if (msgobs.options.log) {
