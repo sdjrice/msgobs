@@ -18,6 +18,7 @@ Version 1.0 on 15/03/21
 - Fixed issue where students on gradebook with the same name could not be distinguished between. 
 - Fixed issue where that occurred when replying to a messages as a user with some admin privileges, but not all. In this scenario, MSGOBS now asks the user to select a course for observer lookup. 
 - Fixed issue with colour highlighting of observers after the insert observers button was pressed for a second time. 
+- Recipient groups are no longer expanded for a cleaner recipient list (unless removing students).
 - Added warning message for replies in conversations that will create a group messages for all recipients. 
 - Added Observer and Student removal counts to success messages. 
 - Changed conversations behaviour as an admin sending a message. MSGOBS now asks the user to select a course for the observer lookup, rather than trying all enrolments for the user (which took a long time). 
