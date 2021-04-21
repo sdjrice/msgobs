@@ -3,7 +3,7 @@
 // @namespace   msgobs
 // @match     https://canvas.test.instructure.com/*
 // @match     https://canvas.instructure.com/*
-// @version     v1.01
+// @version     v1.02
 // @grant       none
 // ==/UserScript==
 
@@ -16,7 +16,7 @@
 // instead applying the script to your entire site.
 
 /*
- * MSGOBS v1.01
+ * MSGOBS v1.02
  * https://github.com/sdjrice/msgobs
  * Stephen Rice
  * sdjrice@gmail.com
@@ -75,7 +75,7 @@
           if (location.includes('/gradebook')) { mode = 'gradebook'; };
 
           if (mode && role) {
-              console.log('--- \n MSGOBS v1.01  \n https://github.com/sdjrice/msgobs \n sdjrice@gmail.com \n ---');
+              console.log('--- \n MSGOBS v1.02  \n https://github.com/sdjrice/msgobs \n sdjrice@gmail.com \n ---');
               msgobs.ui = new Ui(mode);
           }
       }
@@ -143,7 +143,7 @@
                   if (mode === 'gradebook') {
                       // Add eventlistener to remove recipient elemnents added by msgobs when type changes
                       document.querySelector(elements.get('gradesMessageTypesElem')).addEventListener('change', () => {
-                          const recipientElements = document.querySelectorAll(elements.get('gradesRecipientElem'));
+                          const recipientElements = document.querySelectorAll('msgobs-observer');
                           for (const element of recipientElements) {
                               element.remove();
                           }
@@ -394,6 +394,7 @@
               let element = $('#message_students_dialog ul li.blank:first')
                   .clone(false)
                   .removeClass('blank')
+                  .addClass('msgobs-observer')
                   .data('id', recipient.id)
                   .css('display', 'list-item');
               $('.name', element).text(recipient.name);
@@ -419,7 +420,7 @@
               for (const token of gradeTokens) {
                   const tokenId = $(token).data('id');
                   if (tokenId == recipient.id) {
-                      token.remove();
+                      token.style.display = 'hidden';
                   }
               }
               break;

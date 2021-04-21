@@ -12,6 +12,9 @@ Fortunately, thanks to Canvas's open API, a workaround is possible. This script 
 ![demo](https://cloud.githubusercontent.com/assets/22314386/18670963/c71ac7ac-7f74-11e6-87f4-1b24d749f7a1.gif)
 
 ## Changelog
+Version 1.02 on 21/04/21
+- Fixed issue with gradebook 'Scored less than' or 'Scored more than' options not showing any students.
+
 Version 1.01 on 16/03/21
 - Fixed Safari web browser issue
 - Fixed course selector in no context id insertion issue.
