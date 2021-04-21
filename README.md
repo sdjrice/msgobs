@@ -81,7 +81,7 @@ To use the script without having to use a browser extension you'll need to add t
 #### Browser Extention Instllation (for Canvas users)
   1. Using the Google Chrome web browser, download and install the extension [TamperMonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
   2. Click [here](https://github.com/sdjrice/msgobs/raw/master/msgobs.user.js) to install the msgobs as a userscript. Press 'Install' on the TamperMonkey window that appears.
-  3. Hit TamperMonkey -> Dashboard -> Edit Icon on the right of the row for the MSGOBS script and update the @match line to include your institution's Canvas URL, followed by an asterisk. The final line should look something like this: **@match  https://canvas.instructure.com/* ** but with the url substituted with your own Canvas URL. 
+  3. Hit TamperMonkey -> Dashboard -> Edit Icon on the right of the row for the MSGOBS script and update the @match line to include your institution's Canvas URL, followed by an asterisk. The final line should look something like this: __@match  https://canvas.instructure.com/*__ but with the url substituted with your own Canvas URL. 
 
 *If you encounter issues, shoot me an email and we'll figure out why! sdjrice@gmail.com*
 
