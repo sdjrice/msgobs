@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MSGOBS: Message Observers in Canvas
 // @namespace   msgobs
-// @match     https://canvas.test.instructure.com/*
+// @match     https://bcchs.instructure.com/*
 // @match     https://canvas.instructure.com/*
 // @version     v1.02
 // @grant       none
